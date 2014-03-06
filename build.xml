@@ -1,0 +1,179 @@
+<!--  ******************************************************************************* -->
+<!--  * libsdm                                                                      -->
+<!--  * ========                                                                      -->
+<!--  * File: build.xml                                                               -->
+<!--  * Description:                                                                  -->
+<!--  * Copyright (c) 2008, 2010 Diego Maniloff                                       -->
+<!--  * W3: http://www.cs.uic.edu/~dmanilof                                           -->
+<!--  ******************************************************************************* -->
+
+<project name="libsdm" default="dist">
+    <description>
+        build file
+    </description>
+
+  <!-- set global properties for this build -->
+  <property name="src"     location="java"/>
+  <property name="build"   location="build"/>
+  <property name="dist"    location="dist"/>
+  <property name="lib"     location="external"/>
+  <property name="examples"     location="examples/java"/>
+  <property name="javadir"     location="/usr/share/java"/>
+
+<!-- external libraries classpath 
+-->
+  <path id="classpath">
+    <fileset dir="${lib}" />
+    <fileset dir="${javadir}"      />
+    <fileset dir="${dist}"      />
+  </path>
+
+  <!-- default excludes -->
+  <defaultexcludes add="**/bak/*"/>
+  <defaultexcludes add=".git/**"/>
+
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+    <mkdir dir="${dist}"/>
+  </target>
+  
+  <target name="parsers">
+  	 <exec executable="antlr3">
+		<arg value="${src}/libsdm/pomdp/parser/DotPomdp.g"/>
+	 </exec>
+  	 <exec executable="antlr3">
+		<arg value="${src}/libsdm/pomdp/parser/DotAlpha.g"/>	
+	 </exec>
+  </target>
+
+
+  <target name="compile" depends="init"
+
+	  description="compile the source " >
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac debug="true" srcdir="${src}" destdir="${build}" classpathref="classpath" includeantruntime="true"/>
+  </target>
+
+  <target name="dist" depends="compile"
+        description="generate the distribution" >
+    <!-- Create the distribution directory -->
+    <mkdir dir="${dist}"/>
+    <jar jarfile="${dist}/libsdm.jar" basedir="${build}"/>
+  </target>
+
+  <target name="clean"
+        description="clean up" >
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+    <delete>
+     <fileset dir="${examples}" includes="**/*.class"/>
+    </delete>
+  </target>
+
+ <target name="examples">
+    <javac debug="true" srcdir="${examples}" destdir="${examples}" classpathref="classpath" includeantruntime="true"/>
+ </target>
+
+
+</project>
+
+<!--
+  <target name="brlTest">
+  <exec executable="java">
+  <arg value="-Xmx2000m"/>
+  <arg value="-Djava.library.path=/usr/lib/jni"/>
+  <arg value="-classpath"/>
+  <arg value="lib/*:dist/*"/>
+  <arg value="libsdm.test.OnlineBrlDpTest"/>
+  </exec>
+  </target>
+
+  <target name="pomdpOfflineTest">
+  	 <echo message="Running Spaan's Perseus Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libsdm.test.PerseusTest"/>
+	</exec>
+    <echo message="Running Pineu's PBVI (standard) Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libsdm.test.PbviTest"/>
+	</exec>
+  	 <echo message="Running Spaan's Perseus (dynPoints) Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libsdm.test.PerseusDynamicTest"/>
+	</exec>
+    <echo message="Running Pineu's PBVI (SSRA-fast) Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libsdm.test.PbviFastTest"/>
+	</exec>
+  	 <echo message="Running Cassandra's Incremental Pruning Exact Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libsdm.test.IncrementalPruningTest"/>
+	</exec>
+  	 <echo message="Running Monahan's Batch Enumeration Exact Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libsdm.test.BatchEnumerationTest"/>
+	</exec>
+  	 <echo message="Running Sondik's One Pass Exact Algorithm"/>
+    <java classname="libsdm.test.OnePassTest" classpathref="classpath"/>
+  </target>
+
+-->
+
+
+<!--
+  <target name="rhotest">
+   <echo message="Running RHO PBVI Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libsdm.test.RhoPbviTest"/>
+	</exec>
+    <echo message="Running Pineu's PBVI (standard) Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libsdm.test.PbviTest"/>
+	</exec>
+  	 <echo message="Running Cassandra's Incremental Pruning Exact Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libsdm.test.IncrementalPruningTest"/>
+	</exec>
+  	 <echo message="Running RHO IP Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libsdm.test.RhoIncrementalPruningTest"/>
+	</exec>
+  </target>
+-->
+  
+
+

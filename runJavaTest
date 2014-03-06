@@ -1,0 +1,2 @@
+#!/bin/bash
+java -Djava.library.path="/usr/lib:/usr/lib/jni"  -classpath "dist/libsdm.jar:external/colt.jar:external/concurrent.jar:.:/usr/share/java/antlr3-runtime.jar:/usr/share/java/glpk-java.jar" $1
