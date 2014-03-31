@@ -142,18 +142,18 @@ dotPomdp
         	System.out.println("                -> observations "+dotPomdpSpec.nrObs);
         	System.out.println("                -> actions "+dotPomdpSpec.nrAct);
            
-            dotPomdpSpec.T = new RealVector[dotPomdpSpec.nrSta][dotPomdpSpec.nrAct];
-            dotPomdpSpec.O = new RealVector[dotPomdpSpec.nrSta][dotPomdpSpec.nrAct];
+            dotPomdpSpec.T = new SparseVector[dotPomdpSpec.nrSta][dotPomdpSpec.nrAct];
+            dotPomdpSpec.O = new SparseVector[dotPomdpSpec.nrSta][dotPomdpSpec.nrAct];
             for(int s=0; s<dotPomdpSpec.nrSta; s++){
             	for(int a=0; a<dotPomdpSpec.nrAct; a++){
-            	  dotPomdpSpec.T[s][a] = new RealVector(dotPomdpSpec.nrSta);
-                  dotPomdpSpec.O[s][a] = new RealVector(dotPomdpSpec.nrObs);
+            	  dotPomdpSpec.T[s][a] = new SparseVector(dotPomdpSpec.nrSta);
+                  dotPomdpSpec.O[s][a] = new SparseVector(dotPomdpSpec.nrObs);
                   }
                }
            
-            dotPomdpSpec.R = new RealVector[dotPomdpSpec.nrAct];
+            dotPomdpSpec.R = new SparseVector[dotPomdpSpec.nrAct];
             for(int a=0; a<dotPomdpSpec.nrAct; a++)
-               dotPomdpSpec.R[a] = new RealVector(dotPomdpSpec.nrSta); 
+               dotPomdpSpec.R[a] = new SparseVector(dotPomdpSpec.nrSta); 
             System.out.println("PARSER: Parsing starting state/belief...");   
         }
       start_state 
@@ -173,10 +173,10 @@ dotPomdp
             	System.out.println("PARSER: Compressing rewards...");
             	//Create the R(a,s) type of reward (not very efficient, but only one time)
 				for (int a=0;a<dotPomdpSpec.nrAct;a++){
-					//R[a]=new RealVector(dotPomdpSpec.nrSta);
+					//R[a]=new SparseVector(dotPomdpSpec.nrSta);
 					double rval[]=new double[dotPomdpSpec.nrSta];
 					for (int s=0;s<dotPomdpSpec.nrSta;s++){
-						//RealMatrix prod=new RealMatrix(dotPomdpSpec.nrSta,dotPomdpSpec.nrSta);
+						//SparseMatrix prod=new SparseMatrix(dotPomdpSpec.nrSta,dotPomdpSpec.nrSta);
 						//prod=dotPomdpSpec.O[a].transBmult(dotPomdpSpec.fullR[a][s]);
 						double value=0;
 						for (int sp=0;sp<dotPomdpSpec.nrSta;sp++){						
@@ -185,7 +185,7 @@ dotPomdp
 						rval[s]=value;
 						
 					}
-					dotPomdpSpec.R[a]=new RealVector(rval);
+					dotPomdpSpec.R[a]=new SparseVector(rval);
 				}
             }
             System.out.println("PARSER: [DONE]");
@@ -280,7 +280,7 @@ start_state
     |  /* empty */
     	{
     	// Empty start state means uniform belief
-    	dotPomdpSpec.startState=new RealVector(RealVector.getUniform(dotPomdpSpec.nrSta));
+    	dotPomdpSpec.startState=new SparseVector(SparseVector.getUniform(dotPomdpSpec.nrSta));
     	}
     ;
 
@@ -375,13 +375,13 @@ reward_spec_tail
             	// Compressed rewards do not apply any more :(, trying full rewards
             	dotPomdpSpec.compReward=true;
                 // Creating Huge Reward Matrix (4D)
-                dotPomdpSpec.fullR=new RealMatrix[dotPomdpSpec.nrAct][dotPomdpSpec.nrSta];    
+                dotPomdpSpec.fullR=new SparseMatrix[dotPomdpSpec.nrAct][dotPomdpSpec.nrSta];    
             	for(int a=0; a<dotPomdpSpec.nrAct; a++) 
             		for(int s=0; s<dotPomdpSpec.nrSta; s++){ 
-                		dotPomdpSpec.fullR[a][s] = new RealMatrix(dotPomdpSpec.nrSta,dotPomdpSpec.nrObs);
+                		dotPomdpSpec.fullR[a][s] = new SparseMatrix(dotPomdpSpec.nrSta,dotPomdpSpec.nrObs);
                 		// Now we have to copy the date from R to fullR
-                		RealVector colV=RealVector.getHomogene(dotPomdpSpec.nrSta,dotPomdpSpec.R[a].get(s));
-                		//new RealVector(dotPomdpSpec.nrSta);
+                		SparseVector colV=SparseVector.getHomogene(dotPomdpSpec.nrSta,dotPomdpSpec.R[a].get(s));
+                		//new SparseVector(dotPomdpSpec.nrSta);
                 		//for (int sp=0;sp<dotPomdpSpec.nrSta;sp++)
                 		//	colV.assign(sp,dotPomdpSpec.R[a].get(s));	
                 		for (int o=0;o<dotPomdpSpec.nrObs;o++)
@@ -410,30 +410,30 @@ reward_spec_tail
         {err("unsupported feature COLONTOK state num_matrix");}
     ;
 
-ui_matrix returns [RealMatrix m]     
+ui_matrix returns [SparseMatrix m]     
     : UNIFORMTOK 
-    	{$m = RealMatrix.getUniform(dotPomdpSpec.nrSta,dotPomdpSpec.nrSta);}
+    	{$m = SparseMatrix.getUniform(dotPomdpSpec.nrSta,dotPomdpSpec.nrSta);}
     | IDENTITYTOK 
-        {$m = RealMatrix.getIdentity(dotPomdpSpec.nrSta);}
+        {$m = SparseMatrix.getIdentity(dotPomdpSpec.nrSta);}
     | prob_matrix
     	{$m = $prob_matrix.m;}
     ;
 
-u_matrix returns [RealMatrix m]
+u_matrix returns [SparseMatrix m]
     : UNIFORMTOK
     	{
     	switch (matrixContext){
     	case MC_OBSERVATION: 
-    		$m = RealMatrix.getUniform(dotPomdpSpec.nrSta,dotPomdpSpec.nrObs);
+    		$m = SparseMatrix.getUniform(dotPomdpSpec.nrSta,dotPomdpSpec.nrObs);
     		break;
     	case MC_TRANSITION:
-    		$m = RealMatrix.getUniform(dotPomdpSpec.nrSta,dotPomdpSpec.nrSta);
+    		$m = SparseMatrix.getUniform(dotPomdpSpec.nrSta,dotPomdpSpec.nrSta);
     		break;
     	case MC_TRANSITION_ROW:
-    		$m = RealMatrix.getUniform(1,dotPomdpSpec.nrSta);
+    		$m = SparseMatrix.getUniform(1,dotPomdpSpec.nrSta);
     		break;
  		case MC_OBSERVATION_ROW:
-    		$m = RealMatrix.getUniform(1,dotPomdpSpec.nrObs);
+    		$m = SparseMatrix.getUniform(1,dotPomdpSpec.nrObs);
     		break;
     	default:
     		err("PARSER: wrong matrix context... umh? (UNIFORMTOK)");
@@ -446,7 +446,7 @@ u_matrix returns [RealMatrix m]
     	{$m = $prob_matrix.m;}
     ;
 
-prob_matrix returns [RealMatrix m]
+prob_matrix returns [SparseMatrix m]
     : 
      {
      int index = 0;
@@ -474,7 +474,7 @@ prob_matrix returns [RealMatrix m]
     		i_max=0;
     		break;
     	}  
-     $m = new RealMatrix(i_max,j_max);
+     $m = new SparseMatrix(i_max,j_max);
      } 
         (prob 
         {
@@ -484,10 +484,10 @@ prob_matrix returns [RealMatrix m]
         )+
     ;
 
-prob_vector returns [RealVector vector]
+prob_vector returns [SparseVector vector]
     : 
         // initialization here is OK
-        {int index = 0; $vector = new RealVector(dotPomdpSpec.nrSta);} 
+        {int index = 0; $vector = new SparseVector(dotPomdpSpec.nrSta);} 
         (prob 
         {
             // action here - the check for 0 actually doesn't matter
