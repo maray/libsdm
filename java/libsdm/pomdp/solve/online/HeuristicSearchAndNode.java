@@ -11,15 +11,15 @@
 package libsdm.pomdp.solve.online;
 
 import libsdm.common.SparseVector;
-import libsdm.pomdp.AlphaVector;
+
 
 public class HeuristicSearchAndNode extends AndNode {
 
-    public double l;
-    public double u;
-    public double rba;
-    public double hStar;
-    public int oStar;
+    public double                l;
+    public double                u;
+    public double                rba;
+    public double                hStar;
+    public int                   oStar;
     public HeuristicSearchOrNode bStar;
 
     public void init(int action, OrNode parent, double rba) {
@@ -30,10 +30,10 @@ public class HeuristicSearchAndNode extends AndNode {
     @Override
     public void initChildren(int nrObs, SparseVector pOba) {
 	children_ = new HeuristicSearchOrNode[nrObs];
-	for (int observation = 0; observation < nrObs; observation++) {
-	    if (pOba.get(observation) != 0)
+	for(int observation = 0; observation < nrObs; observation++) {
+	    if(pOba.get(observation) != 0)
 		children_[observation] = new HeuristicSearchOrNode();
-	}
+	} 
     }
 
     @Override

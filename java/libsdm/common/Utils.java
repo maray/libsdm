@@ -38,7 +38,8 @@ public class Utils {
 		System.out.print(string);
 		
 	}
-    
+
+	
     
     // / sample from a distribution - need not be fast, this is outside the
     // planning loop
@@ -64,7 +65,6 @@ public class Utils {
     	return(retval);
     }
     */
-    /*
     // / randomized argmax
     public static int argmax(double v[]) {
 	// declarations
@@ -84,7 +84,7 @@ public class Utils {
 	}
 	return argmax;
     } // argmax
-*/
+    
   /*
     // arternative, possibly slower, but more uniform
     public static int argmax2(double v[]) {

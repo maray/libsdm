@@ -1,5 +1,7 @@
 package libsdm.mdp;
 
+import libsdm.pomdp.BeliefState;
+
 
 public interface ValueFunction {
 

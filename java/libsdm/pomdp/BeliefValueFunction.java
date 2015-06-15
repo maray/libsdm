@@ -11,7 +11,6 @@
 package libsdm.pomdp;
 
 import libsdm.mdp.ValueFunction;
-import libsdm.pomdp.plain.SparseBeliefState;
 
 public interface BeliefValueFunction extends ValueFunction {
 
@@ -53,7 +52,6 @@ public interface BeliefValueFunction extends ValueFunction {
 	public AlphaVector getUpperBound();
 
 	public BeliefState find_region(AlphaVector alpha, double delta);
-
 	
 	//public AlphaVector getUpperBound();
 

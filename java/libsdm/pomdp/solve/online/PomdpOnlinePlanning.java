@@ -62,7 +62,7 @@ public class PomdpOnlinePlanning extends OnlinePomdpAlgorithm {
 	
 	public void reset(){
 		current_belief=pomdp.getInitialBeliefState();
-        aoTree = new AndOrTree(pomdp, heuristic, lBound, uBound);
+        aoTree = new AndOrTree(pomdp,null, lBound, uBound,heuristic);
         aoTree.init(current_belief);
         rootNode = aoTree.getRoot();
         super.reset();
