@@ -138,6 +138,7 @@ public class PomdpReward implements BeliefReward  {
 	}
 
 	public SparseVector get(int s, int a,int i) {
+		
 		//if (compReward){
 		//	return fullR[a][s].getColumn(0);
 		//}

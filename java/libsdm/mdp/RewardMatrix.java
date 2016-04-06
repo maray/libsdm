@@ -5,6 +5,8 @@ import libsdm.common.SparseVector;
 public class RewardMatrix implements RewardFunction {
 
 	protected SparseVector[][] func;
+	protected SparseVector[] fcond; 
+	protected boolean condensated;
 	protected double maxs[];
 	protected double mins[];
 	protected double max;
@@ -13,22 +15,41 @@ public class RewardMatrix implements RewardFunction {
 	protected int states;
 	
 	public RewardMatrix(SparseVector[][] r) {
+		condensated=false;
 		reward_init(r);
 	}
 	
-	
-	
 	public RewardMatrix(SparseVector[] r) {
-		SparseVector[][] func=new SparseVector[r[0].size()][r.length];
-		for (int s=0;s<r[0].size();s++){
-			for (int a=0;a<r.length;a++){
-				func[s][a]=SparseVector.getHomogene(r[0].size(), r[a].get(s));
-			}
-		}
-		reward_init(func);
+		condensated=true;
+		
+		//SparseVector[][] func=new SparseVector[r[0].size()][r.length];
+		//for (int s=0;s<r[0].size();s++){
+		//	for (int a=0;a<r.length;a++){
+		//		func[s][a]=SparseVector.getHomogene(r[0].size(), r[a].get(s));
+		//	}
+		//}
+		//reward_init(func);
+		cond_reward_init(r);
 	}
 
-
+	protected void cond_reward_init(SparseVector[] r){
+	    fcond=r;
+	    actions=r.length;
+	    states=r[0].size();
+	    maxs=new double[actions];
+		mins=new double[actions];
+		max=Double.NEGATIVE_INFINITY;
+		min=Double.POSITIVE_INFINITY;
+		for (int a=0;a<actions;a++){
+			maxs[a]=r[a].max();
+			mins[a]=r[a].min();
+			if (maxs[a]>max)
+				max=maxs[a];
+			if (mins[a]<min)
+				min=mins[a];
+		}
+	}
+	
 	protected void reward_init(SparseVector[][] r){
 		//System.out.println("INIT?");
 		func=r;
@@ -41,7 +62,10 @@ public class RewardMatrix implements RewardFunction {
 	}
 	
 	public double get(int state, int action, int nstate, int i) {
-		return func[state][action].get(nstate);
+		if (condensated)
+			return fcond[action].get(state);
+		else
+			return func[state][action].get(nstate);
 		}
 
   protected double compute_max(int a) {
@@ -84,7 +108,10 @@ public class RewardMatrix implements RewardFunction {
 	}
 
 	public SparseVector get(int state, int action,int i) {
-		return func[state][action];
+		if (condensated)
+			return SparseVector.getHomogene(states, fcond[action].get(state));
+		else
+		    return func[state][action];
 	}
 	
 	public boolean stationary() {
@@ -92,6 +119,9 @@ public class RewardMatrix implements RewardFunction {
 	}
 
 	public SparseVector get(int a, int i, TransitionMatrix tr) {
+		if (condensated)
+			return fcond[a];
+		
 		double val[]= new double[states];
 		for (int j=0;j<states;j++){
 			val[j]=tr.get(j,a,i).dot(func[j][a]);
