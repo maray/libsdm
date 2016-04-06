@@ -88,6 +88,7 @@ public class AEMS2  extends OnlinePomdpAlgorithm implements ExpandHeuristic{
 	/// H*(b,a) = \max_o {H(b,a,o) H*(tao(b,a,o))}
 	@Override
 	public double hANDStar(HeuristicSearchAndNode a) {
+		//System.out.println(a.getChild(a.oStar));
 		return a.getChild(a.oStar).h_bao * a.getChild(a.oStar).hStar;
 	}
 
@@ -112,9 +113,11 @@ public class AEMS2  extends OnlinePomdpAlgorithm implements ExpandHeuristic{
 				HbaoHostar[o] = a.getChild(o).h_bao *
 						a.getChild(o).hStar;
 			} else {
-				HbaoHostar[o] = -1; // do this to preserve the argmax
+				HbaoHostar[o] = Double.NEGATIVE_INFINITY; // do this to preserve the argmax
 				//nullCount++;
 			}
+			//System.out.println("o"+o+"="+HbaoHostar[o]);
+			
 		}
 		// System.out.println("nullcount inside oStar is "+ nullCount);
 		// 	System.out.println(DoubleArray.toString(HbaoHostar));

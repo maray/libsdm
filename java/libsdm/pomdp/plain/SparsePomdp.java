@@ -123,6 +123,7 @@ public class SparsePomdp extends SparseMdp implements Pomdp, Serializable  {
     }
 
 	public String getObservationString(int o) {
+		if (obsStr==null) return null;
     	return obsStr[o];
     }
 

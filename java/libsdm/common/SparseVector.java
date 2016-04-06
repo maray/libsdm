@@ -184,27 +184,29 @@ public class SparseVector implements Serializable{
 						idx++;
 					}
 					j++;
-			}
-			//System.out.println("i iter ("+i+","+j+")=("+index[i]+","+cv.index[j]+")");
-			if (j < vec.index.length && index[i] == vec.index[j]) {
-				double val;
-				val = Math.max(data[i],vec.data[j]);
-				//System.out.println("index["+idx+"]=other.index["+j+"] = this.index["+i+"] ="+index[i]);
-				//System.out.println("data["+idx+"]=other.data["+j+"] + this.data["+i+"] = "+cv.data[j]+" + "+data[i]+" = "+val);
-				newindex[idx] = index[i];
-				newdata[idx] = val;
-				idx++;
-				j++;
-			} else {
-				//System.out.println("index["+idx+"]=this.index["+i+"]="+index[i]);
-				//System.out.println("data["+idx+"]=this.data["+i+"]="+data[i]);
-				if (data[j]>0){
-					newindex[idx] = index[i];
-					newdata[idx] = data[i];	
-					idx++;
 				}
-			}
-			i++;
+				//System.out.println("i iter ("+i+","+j+")=("+index[i]+","+cv.index[j]+")");
+				if (j < vec.index.length){ 
+					if (index[i] == vec.index[j]) {
+						double val;
+						val = Math.max(data[i],vec.data[j]);
+						//System.out.println("index["+idx+"]=other.index["+j+"] = this.index["+i+"] ="+index[i]);
+						//System.out.println("data["+idx+"]=other.data["+j+"] + this.data["+i+"] = "+cv.data[j]+" + "+data[i]+" = "+val);
+						newindex[idx] = index[i];
+						newdata[idx] = val;
+						idx++;
+						j++;
+					} else {
+						//System.out.println("index["+idx+"]=this.index["+i+"]="+index[i]);
+						//System.out.println("data["+idx+"]=this.data["+i+"]="+data[i]);
+						if (data[j]>0){
+							newindex[idx] = index[i];
+							newdata[idx] = data[i];	
+							idx++;
+						}
+					}
+				}
+				i++;
 			}
 		}
 		if (idx==0){

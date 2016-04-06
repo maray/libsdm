@@ -19,7 +19,7 @@ public class FastInformedBound extends AlphaIteration {
 	public FastInformedBound(Pomdp pomdp,double qmdp_epsilon) {
 		startInit(pomdp,0);
 		QmdpBound ibound=new QmdpBound(pomdp,qmdp_epsilon);
-		ibound.setVerbose(false);
+		ibound.setVerbose(true);
 		ibound.run();
 		//System.out.println(ibound.getAlphaVector());
 		current=pomdp.getEmptyValueFunction();
@@ -28,6 +28,13 @@ public class FastInformedBound extends AlphaIteration {
 		endInit();
     }
 
+	public AlphaVector getAlphaVector(){ 
+		AlphaVector alpha;
+		alpha=pomdp.getEmptyAlpha();
+		alpha.set(this.getValueFunction());
+		return alpha;
+	}
+	
     @Override
     public IterationStats iterate() {
     	startIteration();

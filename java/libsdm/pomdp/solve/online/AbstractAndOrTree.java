@@ -53,13 +53,4 @@ public abstract class AbstractAndOrTree {
         offlineUpper = ub;
     }
 
-	public void updateAncestors(HeuristicSearchOrNode n) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void expand(HeuristicSearchOrNode en) {
-		// TODO Auto-generated method stub
-		
-	}
 }

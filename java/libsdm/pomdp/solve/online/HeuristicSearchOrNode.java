@@ -39,7 +39,7 @@ public class HeuristicSearchOrNode extends OrNode {
     @Override
     public void initChildren(int nrAct) {
 	// allocate space for the children AND nodes
-	children_ = new HeuristicSearchAndNode[nrAct];
+    children_ = new HeuristicSearchAndNode[nrAct];
 	for (int action=0; action<nrAct; action++)
 	    children_[action] = new HeuristicSearchAndNode();
     }

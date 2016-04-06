@@ -54,7 +54,6 @@ public class AndOrTree extends AbstractAndOrTree {
 	 * expand(HeuristicSearchOrNode en):
 	 * one-step expansion of |A||O| HeuristicSearchOrNodes
 	 */
-	@Override
 	public void expand(HeuristicSearchOrNode en){
 		// make sure this node hasn't been expanded before
 		if (en.getChildren() != null) {
@@ -73,7 +72,6 @@ public class AndOrTree extends AbstractAndOrTree {
 		en.initChildren(getProblem().actions());
 		// iterate through the AND nodes
 		for (int action = 0; action < getProblem().actions(); action++) {
-			// type-cast, doon't yet know of a nicer way to do this
 			a = en.getChild(action);
 			// initialize this node, precompute Rba
 			a.init(action, en, getProblem().getRewardFunction().eval(en.getBeliefState(), action,-1));
@@ -81,22 +79,21 @@ public class AndOrTree extends AbstractAndOrTree {
 			pOba = getProblem().observationProbabilities(en.getBeliefState(), action,0);
 			// allocate space for the children OR nodes, the ones with poba == 0
 			// are left null
-			//a.children = new HeuristicSearchOrNode[getProblem().getnrObs()];
-			//for(int observation = 0; observation < getProblem().getnrObs(); observation++) {
-			//if(pOba[observation] != 0)
-			//a.children[observation] = new HeuristicSearchOrNode();
-			//}
 			a.initChildren(getProblem().observations(), pOba);
 			// iterate through new fringe OR nodes
+			//System.out.println("act "+action);
+			//System.out.println(pOba);
 			for (int observation = 0; observation < getProblem().observations(); observation++) {
-				// type-cast, doon't yet know of a nicer way to do this
 				o = a.getChild(observation);
+				
+			    //System.out.println("obs "+observation+" poba="+pOba.get(observation));
 				// ZERO-PROB OBSERVATIONS:
 				// here we should continue the loop and avoid re-computing V^L and V^U
 				// for belief nodes with poba == 0
 				if (pOba.get(observation) == 0) {
 					//a.children[observation] = null; - already done!
 					//observation++;
+					//System.out.println("obs 0="+observation);
 					continue;
 				}
 				// initialize this node, set its poba
@@ -123,12 +120,14 @@ public class AndOrTree extends AbstractAndOrTree {
 			a.u = ANDpropagateU(a);
 			// observation in the path to the next node to expand
 			a.oStar = expH.oStar(a);
+			//System.out.println(a.oStar);
 			// H*(b,a)
 			a.hStar = expH.hANDStar(a);
 			// b*(b,a) - propagate ref of b*
 			a.bStar = a.getChild(a.oStar).bStar;
 		}  // andNode loop
 
+		
 		// update values in en
 		en.l = ORpropagateL(en);
 		en.u = ORpropagateU(en);
@@ -147,6 +146,7 @@ public class AndOrTree extends AbstractAndOrTree {
 		// one-step improvement for debugging purposes
 		en.oneStepDeltaLower = en.l - old_l;
 		en.oneStepDeltaUpper = en.u - old_u;
+		//this.orprint(en, System.out);
 		if(en.oneStepDeltaLower < 0) System.err.println("Hmmmmmmmmmmm");
 	} // expand
 
@@ -158,6 +158,7 @@ public class AndOrTree extends AbstractAndOrTree {
 	public void updateAncestors(HeuristicSearchOrNode n) {
 		// make sure this is not the call after expanding the root
 		if (null == n.getChildren()) return;
+		//System.out.println("update");
 		// if array.length does not count nulls, then we could use that here...
 		// could also just keep n untouched, and use o from the beginning...
 		int subTreeSizeDelta = n.getSubTreeSize();
