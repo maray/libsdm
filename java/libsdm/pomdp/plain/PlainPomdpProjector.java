@@ -1,5 +1,7 @@
 package libsdm.pomdp.plain;
 
+import java.io.Serializable;
+
 import libsdm.common.DenseVector;
 import libsdm.common.SparseMatrix;
 import libsdm.common.SparseVector;
@@ -7,8 +9,12 @@ import libsdm.pomdp.AlphaVector;
 import libsdm.pomdp.BeliefState;
 import libsdm.pomdp.Pomdp;
 
-public class PlainPomdpProjector {
+public class PlainPomdpProjector implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5928693504174861602L;
 	SparseMatrix tau[][];
 	SparseMatrix OT[];
 	boolean blocker[][];
